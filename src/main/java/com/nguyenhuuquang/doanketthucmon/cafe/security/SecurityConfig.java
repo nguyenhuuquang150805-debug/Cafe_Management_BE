@@ -86,14 +86,16 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // ✅ CORS cho frontend
+    // ✅ CORS cho frontend (ĐÃ SỬA)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(List.of("*"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedHeaders(List.of("*")); // ✅ CHO PHÉP TẤT CẢ HEADERS
+        configuration.setExposedHeaders(List.of("Authorization", "Content-Type")); // ✅ THÊM EXPOSED HEADERS
         configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L); // ✅ CACHE PREFLIGHT 1 TIẾNG
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

@@ -18,6 +18,10 @@ public class HealthController {
         response.put("status", "UP");
         response.put("timestamp", LocalDateTime.now().toString());
         response.put("version", "1.0.0");
+        response.put("endpoints", Map.of(
+                "health", "/health",
+                "auth", "/api/auth/login",
+                "register", "/api/auth/register"));
         return ResponseEntity.ok(response);
     }
 
