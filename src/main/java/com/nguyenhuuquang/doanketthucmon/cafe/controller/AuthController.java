@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nguyenhuuquang.doanketthucmon.cafe.entity.User;
+import com.nguyenhuuquang.doanketthucmon.cafe.entity.enums.Role;
 import com.nguyenhuuquang.doanketthucmon.cafe.repository.UserRepository;
 import com.nguyenhuuquang.doanketthucmon.cafe.security.JwtUtil;
 
@@ -33,7 +34,6 @@ public class AuthController {
         this.jwtUtil = jwtUtil;
     }
 
-    // ✅ REGISTER ENDPOINT - THÊM MỚI
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Map<String, String> request) {
         System.out.println("🔍 [AUTH] Register request received: " + request);
@@ -64,25 +64,27 @@ public class AuthController {
             user.setFullName(fullName);
             user.setPhone(phone);
 
+            user.setRole(Role.STAFF); // Default role for new users
+
             user.setIsActive(true);
             user.setCreatedAt(LocalDateTime.now());
             user.setUpdatedAt(LocalDateTime.now());
 
-            userRepository.save(user);
+            User savedUser = userRepository.save(user);
             System.out.println("✅ [AUTH] User registered successfully: " + email);
 
             // Generate token
-            String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
+            String token = jwtUtil.generateToken(savedUser.getUsername(), savedUser.getRole().name());
 
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(Map.of(
                             "message", "User registered successfully",
                             "token", token,
                             "user", Map.of(
-                                    "id", user.getId(),
-                                    "email", user.getEmail(),
-                                    "fullName", user.getFullName(),
-                                    "role", user.getRole().name())));
+                                    "id", savedUser.getId(),
+                                    "email", savedUser.getEmail(),
+                                    "fullName", savedUser.getFullName() != null ? savedUser.getFullName() : "",
+                                    "role", savedUser.getRole().name())));
 
         } catch (Exception e) {
             System.err.println("❌ [AUTH] Register error: " + e.getMessage());

@@ -28,7 +28,8 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    @Builder.Default
+    private Role role = Role.STAFF;
 
     private String email;
     private String phone;

@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         // 🔓 CRITICAL: Health checks MUST be FIRST!
                         .requestMatchers("/", "/health", "/ping", "/actuator/**").permitAll()
-
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // 🔓 Public - Auth, uploads, payment
                         .requestMatchers("/api/auth/**", "/uploads/**", "/api/payment/**").permitAll()
 
