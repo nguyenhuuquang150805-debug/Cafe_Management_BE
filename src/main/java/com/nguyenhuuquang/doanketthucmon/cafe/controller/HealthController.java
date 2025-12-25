@@ -18,10 +18,34 @@ public class HealthController {
         response.put("status", "UP");
         response.put("timestamp", LocalDateTime.now().toString());
         response.put("version", "1.0.0");
+
+        // 📋 API Endpoints với hướng dẫn chi tiết
         response.put("endpoints", Map.of(
-                "health", "/health",
-                "auth", "/api/auth/login",
-                "register", "/api/auth/register"));
+                "health", Map.of(
+                        "url", "/health",
+                        "method", "GET",
+                        "description", "Check API health status"),
+                "register", Map.of(
+                        "url", "/api/auth/register",
+                        "method", "POST ⚠️",
+                        "description", "Register new user",
+                        "contentType", "application/json",
+                        "body", Map.of(
+                                "email", "test@gmail.com",
+                                "password", "123456",
+                                "fullName", "Test User",
+                                "phone", "0123456789")),
+                "login", Map.of(
+                        "url", "/api/auth/login",
+                        "method", "POST ⚠️",
+                        "description", "Login user",
+                        "contentType", "application/json",
+                        "body", Map.of(
+                                "email", "test@gmail.com",
+                                "password", "123456"))));
+
+        response.put("⚠️ IMPORTANT", "Registration and Login endpoints require POST method, not GET!");
+
         return ResponseEntity.ok(response);
     }
 

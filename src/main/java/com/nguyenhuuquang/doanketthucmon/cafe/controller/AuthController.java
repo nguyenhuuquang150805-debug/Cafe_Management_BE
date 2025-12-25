@@ -64,9 +64,7 @@ public class AuthController {
             user.setPassword(passwordEncoder.encode(password));
             user.setFullName(fullName);
             user.setPhone(phone);
-
-            user.setRole(Role.STAFF); // Default role for new users
-
+            user.setRole(Role.STAFF);
             user.setIsActive(true);
             user.setCreatedAt(LocalDateTime.now());
             user.setUpdatedAt(LocalDateTime.now());
@@ -95,15 +93,24 @@ public class AuthController {
         }
     }
 
+    // ❌ XỬ LÝ SAI METHOD (GET thay vì POST)
     @GetMapping("/register")
     public ResponseEntity<?> registerGetMethod() {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
                 .body(Map.of(
-                        "error", "Method GET is not allowed for registration",
-                        "hint", "Please use POST method with JSON body",
-                        "example", Map.of(
-                                "method", "POST",
-                                "url", "/api/auth/register",
+                        "error", "❌ WRONG HTTP METHOD!",
+                        "message", "You are using GET method. Registration requires POST method.",
+                        "correctMethod", "POST",
+                        "endpoint", "/api/auth/register",
+                        "howToFix", Map.of(
+                                "step1", "Change HTTP method from GET to POST",
+                                "step2", "Add header: Content-Type: application/json",
+                                "step3", "Add JSON body with email, password, fullName, phone"),
+                        "exampleCurl",
+                        "curl -X POST https://your-api.com/api/auth/register -H \"Content-Type: application/json\" -d '{\"email\":\"test@gmail.com\",\"password\":\"123456\",\"fullName\":\"Test User\",\"phone\":\"0123456789\"}'",
+                        "examplePostman", Map.of(
+                                "method", "POST (not GET!)",
+                                "url", "https://your-api.com/api/auth/register",
                                 "headers", Map.of("Content-Type", "application/json"),
                                 "body", Map.of(
                                         "email", "test@gmail.com",
@@ -112,7 +119,6 @@ public class AuthController {
                                         "phone", "0123456789"))));
     }
 
-    // ✅ LOGIN ENDPOINT - SỬA LẠI
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> request) {
         System.out.println("🔍 [AUTH] Login request received: " + request);
@@ -126,23 +132,19 @@ public class AuthController {
                         .body(Map.of("error", "Email and password are required"));
             }
 
-            // Find user by email
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-            // Validate password
             if (!passwordEncoder.matches(password, user.getPassword())) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(Map.of("error", "Invalid credentials"));
             }
 
-            // Check if user is active
             if (!user.getIsActive()) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                         .body(Map.of("error", "Account is inactive"));
             }
 
-            // Generate token
             String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
             System.out.println("✅ [AUTH] Login successful: " + email);
 
