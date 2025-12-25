@@ -42,9 +42,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 path.equals("/health") ||
                 path.equals("/ping") ||
                 path.startsWith("/actuator") ||
-                path.startsWith("/api/auth") || // ✅ BỎ DẤU / CUỐI
-                path.startsWith("/uploads") || // ✅ BỎ DẤU / CUỐI
-                path.startsWith("/api/payment") || // ✅ BỎ DẤU / CUỐI
+                path.startsWith("/api/auth") ||
+                path.startsWith("/uploads") ||
+                path.startsWith("/api/payment") ||
                 path.equals("/favicon.ico")) {
             System.out.println("✅ [JWT Filter] Public endpoint - bypass");
             filterChain.doFilter(request, response);

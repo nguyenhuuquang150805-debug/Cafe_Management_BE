@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -92,6 +93,23 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Registration failed: " + e.getMessage()));
         }
+    }
+
+    @GetMapping("/register")
+    public ResponseEntity<?> registerGetMethod() {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+                .body(Map.of(
+                        "error", "Method GET is not allowed for registration",
+                        "hint", "Please use POST method with JSON body",
+                        "example", Map.of(
+                                "method", "POST",
+                                "url", "/api/auth/register",
+                                "headers", Map.of("Content-Type", "application/json"),
+                                "body", Map.of(
+                                        "email", "test@gmail.com",
+                                        "password", "123456",
+                                        "fullName", "Test User",
+                                        "phone", "0123456789"))));
     }
 
     // ✅ LOGIN ENDPOINT - SỬA LẠI
