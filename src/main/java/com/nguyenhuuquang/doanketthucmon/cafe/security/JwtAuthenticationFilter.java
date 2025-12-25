@@ -34,10 +34,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         String method = request.getMethod();
 
-        // 🔍 DEBUG: Log request để tracking
-        System.out.println("🔍 [JWT Filter] " + method + " " + path);
+        // 🔍 DEBUG: Log chi tiết
+        System.out.println("═══════════════════════════════════════════════════");
+        System.out.println("🔍 [JWT Filter] Method: " + method);
+        System.out.println("🔍 [JWT Filter] Path: " + path);
+        System.out.println("🔍 [JWT Filter] Content-Type: " + request.getHeader("Content-Type"));
+        System.out.println("🔍 [JWT Filter] User-Agent: " + request.getHeader("User-Agent"));
+        System.out.println("🔍 [JWT Filter] Origin: " + request.getHeader("Origin"));
 
-        // ✅ Bỏ qua JWT cho các endpoint PUBLIC
+        // Log tất cả headers
+        System.out.println("🔍 [JWT Filter] All Headers:");
+        java.util.Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            System.out.println("  " + headerName + ": " + request.getHeader(headerName));
+        }
+        System.out.println("═══════════════════════════════════════════════════");
+
+        // Rest of your filter code...
         if (path.equals("/") ||
                 path.equals("/health") ||
                 path.equals("/ping") ||
