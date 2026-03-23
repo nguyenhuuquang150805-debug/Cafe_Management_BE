@@ -170,7 +170,7 @@ public class OrderItemServiceImpl implements OrderItemService {
                                 .notes(order.getNotes())
                                 .createdAt(order.getCreatedAt())
                                 .updatedAt(order.getUpdatedAt())
-                                .items(null) // tránh vòng lặp vô hạn
+                                .items(null)
                                 .build();
         }
 }

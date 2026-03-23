@@ -40,7 +40,6 @@ public class PromotionServiceImpl implements PromotionService {
         promotion.setCreatedAt(LocalDateTime.now());
         promotion.setUpdatedAt(LocalDateTime.now());
 
-        // Thêm products đồng bộ 2 chiều
         if (request.getProductIds() != null && !request.getProductIds().isEmpty()) {
             productRepository.findAllById(request.getProductIds())
                     .forEach(promotion::addProduct);
@@ -77,7 +76,6 @@ public class PromotionServiceImpl implements PromotionService {
         promotion.setIsActive(request.getIsActive());
         promotion.setUpdatedAt(LocalDateTime.now());
 
-        // Xóa mapping cũ
         promotion.getProducts().forEach(p -> p.getPromotions().remove(promotion));
         promotion.getProducts().clear();
 
@@ -95,7 +93,6 @@ public class PromotionServiceImpl implements PromotionService {
         Promotion promotion = promotionRepository.findByIdWithProducts(id)
                 .orElseThrow(() -> new RuntimeException("Promotion not found"));
 
-        // Xóa mapping trước để tránh lỗi 403
         for (Product p : promotion.getProducts()) {
             p.getPromotions().remove(promotion);
         }

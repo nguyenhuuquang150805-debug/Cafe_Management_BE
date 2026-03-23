@@ -20,28 +20,13 @@ public class MyUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-        System.out.println("🔍 [UserDetailsService] Loading user: " + usernameOrEmail);
-
-        // ✅ TÌM THEO USERNAME HOẶC EMAIL
-        User user = userRepository.findByUsername(usernameOrEmail)
-                .or(() -> userRepository.findByEmail(usernameOrEmail))
-                .orElseThrow(() -> {
-                    System.err.println("❌ [UserDetailsService] User not found: " + usernameOrEmail);
-                    return new UsernameNotFoundException("User not found: " + usernameOrEmail);
-                });
-
-        System.out.println("✅ [UserDetailsService] User found: " + user.getUsername() + ", Role: " + user.getRole());
-
-        // ✅ KIỂM TRA TÀI KHOẢN CÓ ACTIVE KHÔNG
-        if (!user.getIsActive()) {
-            System.err.println("❌ [UserDetailsService] User is inactive: " + user.getUsername());
-            throw new UsernameNotFoundException("User is inactive");
-        }
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User u = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())));
+                u.getUsername(),
+                u.getPassword(),
+                List.of(new SimpleGrantedAuthority("ROLE_" + u.getRole().name())));
     }
 }

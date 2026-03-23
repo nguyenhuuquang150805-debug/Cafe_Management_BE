@@ -39,7 +39,7 @@ public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder; // ✅ Thêm PasswordEncoder
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping
     public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest request) {
@@ -77,7 +77,7 @@ public class UserController {
         User user = new User();
         user.setUsername(username);
         user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password)); // ✅ MÃ HÓA MẬT KHẨU
+        user.setPassword(passwordEncoder.encode(password));
         user.setFullName(fullName);
         user.setRole(role);
         user.setPhone(phone);
@@ -130,9 +130,8 @@ public class UserController {
         user.setIsActive(isActive);
         user.setUpdatedAt(LocalDateTime.now());
 
-        // ✅ Chỉ cập nhật mật khẩu nếu được gửi từ client VÀ MÃ HÓA
         if (password != null && !password.trim().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(password)); // ✅ MÃ HÓA MẬT KHẨU
+            user.setPassword(passwordEncoder.encode(password));
         }
 
         if (avatarFile != null && !avatarFile.isEmpty()) {

@@ -14,5 +14,5 @@ public class PromotionRequest {
     private LocalDate startDate;
     private LocalDate endDate;
     private Boolean isActive = true;
-    private Set<Long> productIds; // danh sách product id được áp dụng
+    private Set<Long> productIds;
 }

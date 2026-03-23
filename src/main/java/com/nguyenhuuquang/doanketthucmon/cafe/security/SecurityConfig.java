@@ -33,10 +33,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
-                        // 🔓 CRITICAL: Health checks MUST be FIRST!
-                        .requestMatchers("/", "/health", "/ping", "/actuator/**").permitAll()
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        // 🔓 Public - Auth, uploads, payment
+                        // 🔓 Public
                         .requestMatchers("/api/auth/**", "/uploads/**", "/api/payment/**").permitAll()
 
                         // 🔓 GET công khai (menu, danh mục, sản phẩm)
@@ -45,9 +42,8 @@ public class SecurityConfig {
                                 "/api/products/**",
                                 "/api/promotions/**")
                         .permitAll()
-
                         // 🧾 BILLS - ĐẶT TRƯỚC CÁC QUY TẮC KHÁC
-                        .requestMatchers(HttpMethod.GET, "/api/bills/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/bills/**").permitAll() // ✅ Cho phép GET public
                         .requestMatchers(HttpMethod.POST, "/api/bills/**").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers(HttpMethod.PUT, "/api/bills/**").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers(HttpMethod.DELETE, "/api/bills/**").hasRole("ADMIN")
@@ -61,6 +57,7 @@ public class SecurityConfig {
                         .hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers(HttpMethod.DELETE, "/api/tables/**", "/api/orders/**")
                         .hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/orders/**").hasRole("ADMIN")
 
                         // 🧑‍💼 ADMIN-only: quản lý danh mục, sản phẩm, khuyến mãi
                         .requestMatchers(HttpMethod.POST,
@@ -86,16 +83,14 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // ✅ CORS cho frontend (ĐÃ SỬA)
+    // ✅ CORS cho frontend
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("*"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(List.of("*")); // ✅ CHO PHÉP TẤT CẢ HEADERS
-        configuration.setExposedHeaders(List.of("Authorization", "Content-Type")); // ✅ THÊM EXPOSED HEADERS
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L); // ✅ CACHE PREFLIGHT 1 TIẾNG
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

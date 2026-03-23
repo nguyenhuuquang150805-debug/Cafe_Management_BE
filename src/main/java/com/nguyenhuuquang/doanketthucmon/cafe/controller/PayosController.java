@@ -31,11 +31,7 @@ public class PayosController {
         try {
             System.out.println("📥 Nhận request: orderId=" + dto.orderId + ", amount=" + dto.amount);
 
-            // Tạo orderCode unique (dùng timestamp)
             Long orderCode = System.currentTimeMillis() / 1000;
-
-            // 🔥 LƯU orderId VÀO NOTES CỦA ORDER để sau này retrieve lại
-            // Hoặc dùng orderCode = orderId (nếu orderId không quá lớn)
 
             Map<String, Object> resp = payosService.createPaymentLink(
                     orderCode,
@@ -47,14 +43,13 @@ public class PayosController {
 
             System.out.println("✅ PayOS response: " + resp);
 
-            // Thêm orderId và orderCode vào response
             Map<String, Object> responseWithOrderId = new HashMap<>();
             responseWithOrderId.put("code", resp.get("code"));
             responseWithOrderId.put("desc", resp.get("desc"));
             responseWithOrderId.put("data", resp.get("data"));
             responseWithOrderId.put("signature", resp.get("signature"));
             responseWithOrderId.put("orderId", dto.orderId);
-            responseWithOrderId.put("orderCode", orderCode); // 🔥 THÊM orderCode
+            responseWithOrderId.put("orderCode", orderCode);
 
             return ResponseEntity.ok(responseWithOrderId);
 
@@ -65,15 +60,9 @@ public class PayosController {
         }
     }
 
-    // 🔥 THÊM: API LẤY orderId TỪ orderCode (query từ database)
     @GetMapping("/mapping/{orderCode}")
     public ResponseEntity<?> getOrderIdByOrderCode(@PathVariable Long orderCode) {
         try {
-            // 🔥 TÌM ORDER THEO ORDERCODE TRONG NOTES HOẶC CUSTOM FIELD
-            // Giải pháp tạm: Frontend truyền orderId qua localStorage hoặc URL param
-
-            // Giải pháp tốt hơn: Tạo bảng PaymentMapping trong DB
-            // Hoặc lưu orderCode vào notes của Order khi tạo payment
 
             return ResponseEntity.status(501).body(Map.of(
                     "success", false,
@@ -84,13 +73,11 @@ public class PayosController {
         }
     }
 
-    // 🔥 THÊM: WEBHOOK NHẬN THÔNG BÁO TỪ PAYOS
     @PostMapping("/webhook")
     public ResponseEntity<?> handleWebhook(@RequestBody Map<String, Object> webhookData) {
         try {
             System.out.println("🔔 Nhận webhook từ PayOS: " + webhookData);
 
-            // Parse webhook data
             String code = (String) webhookData.get("code");
             Long orderCode = Long.parseLong(webhookData.get("orderCode").toString());
             String status = (String) webhookData.get("status");
@@ -98,15 +85,9 @@ public class PayosController {
             System.out.println(
                     "📋 Webhook details - code: " + code + ", orderCode: " + orderCode + ", status: " + status);
 
-            // 🔥 NẾU THANH TOÁN THÀNH CÔNG
             if ("00".equals(code) || "PAID".equals(status)) {
-                // TODO: Tìm orderId từ orderCode và cập nhật
                 System.out.println("✅ Thanh toán thành công - cần cập nhật Order");
 
-                // Ví dụ logic:
-                // Long orderId = findOrderIdByOrderCode(orderCode);
-                // orderService.updateOrderStatus(orderId, "PAID");
-                // tableService.updateTableStatus(tableId, "FREE");
             }
 
             return ResponseEntity.ok(Map.of("success", true));
@@ -122,7 +103,6 @@ public class PayosController {
         try {
             System.out.println("🔍 Kiểm tra trạng thái thanh toán: " + orderCode);
 
-            // TODO: Gọi PayOS API để check status
             return ResponseEntity.ok(Map.of(
                     "success", true,
                     "message", "Lấy trạng thái thành công"));

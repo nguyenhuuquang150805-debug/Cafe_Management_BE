@@ -46,7 +46,6 @@ public class ProductController {
         return ResponseEntity.ok(productService.createProduct(request));
     }
 
-    // ✅ Đổi đường dẫn thành /upload và lưu vào static/uploads/
     @PostMapping(value = "/upload", consumes = "multipart/form-data")
     public ResponseEntity<Product> createProductWithImage(
             @RequestParam("name") String name,
