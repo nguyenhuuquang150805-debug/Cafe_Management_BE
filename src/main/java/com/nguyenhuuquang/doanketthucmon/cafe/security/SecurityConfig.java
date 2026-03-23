@@ -1,7 +1,5 @@
 package com.nguyenhuuquang.doanketthucmon.cafe.security;
 
-import java.util.List;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,9 +11,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -30,25 +25,22 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(cors -> cors.configure(http))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/health", "/", "/api/auth/**", "/uploads/**", "/api/payment/**").permitAll()
 
-                        // 🔓 GET công khai
                         .requestMatchers(HttpMethod.GET,
                                 "/api/categories/**",
                                 "/api/products/**",
                                 "/api/promotions/**")
                         .permitAll()
 
-                        // 🧾 BILLS
                         .requestMatchers(HttpMethod.GET, "/api/bills/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/bills/**").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers(HttpMethod.PUT, "/api/bills/**").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers(HttpMethod.DELETE, "/api/bills/**").hasRole("ADMIN")
 
-                        // 🧑‍💼 Tables + Orders
                         .requestMatchers(HttpMethod.GET, "/api/tables/**", "/api/orders/**")
                         .hasAnyRole("ADMIN", "STAFF", "EMPLOYEE")
                         .requestMatchers(HttpMethod.POST, "/api/tables/**", "/api/orders/**")
@@ -58,7 +50,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/tables/**", "/api/orders/**")
                         .hasRole("ADMIN")
 
-                        // 🧑‍💼 ADMIN-only
                         .requestMatchers(HttpMethod.POST,
                                 "/api/categories/**", "/api/products/**", "/api/promotions/**")
                         .hasRole("ADMIN")
@@ -69,7 +60,6 @@ public class SecurityConfig {
                                 "/api/categories/**", "/api/products/**", "/api/promotions/**")
                         .hasRole("ADMIN")
 
-                        // 👤 Users
                         .requestMatchers(HttpMethod.GET, "/api/users/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/users/**").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/users/**").hasAnyRole("ADMIN")
@@ -79,19 +69,6 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("*"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-        configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
     }
 
     @Bean
