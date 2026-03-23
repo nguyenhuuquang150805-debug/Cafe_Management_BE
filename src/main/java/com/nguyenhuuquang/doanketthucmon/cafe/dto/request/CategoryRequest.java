@@ -1,4 +1,4 @@
-package com.nguyenhuuquang.doanketthucmon.cafe.dto;
+package com.nguyenhuuquang.doanketthucmon.cafe.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

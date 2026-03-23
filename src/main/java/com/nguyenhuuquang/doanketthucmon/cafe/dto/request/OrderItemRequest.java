@@ -1,20 +1,18 @@
-package com.nguyenhuuquang.doanketthucmon.cafe.dto;
+package com.nguyenhuuquang.doanketthucmon.cafe.dto.request;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
-public class OrderItemResponse {
-    private Long id;
-    private ProductResponse product;
-    private OrderResponse order;
+public class OrderItemRequest {
+    private Long orderId;
+    private Long productId;
     private Integer quantity;
     private BigDecimal price;
     private BigDecimal subtotal;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

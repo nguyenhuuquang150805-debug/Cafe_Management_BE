@@ -7,11 +7,11 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.CategoryResponse;
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.OrderItemRequest;
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.OrderItemResponse;
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.OrderResponse;
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.ProductResponse;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.request.OrderItemRequest;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.response.CategoryResponse;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.response.OrderItemResponse;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.response.OrderResponse;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.response.ProductResponse;
 import com.nguyenhuuquang.doanketthucmon.cafe.entity.Order;
 import com.nguyenhuuquang.doanketthucmon.cafe.entity.OrderItem;
 import com.nguyenhuuquang.doanketthucmon.cafe.entity.Product;
@@ -133,7 +133,8 @@ public class OrderItemServiceImpl implements OrderItemService {
                 return OrderResponse.builder()
                                 .id(order.getId())
                                 .table(order.getTable() != null
-                                                ? com.nguyenhuuquang.doanketthucmon.cafe.dto.TableResponse.builder()
+                                                ? com.nguyenhuuquang.doanketthucmon.cafe.dto.response.TableResponse
+                                                                .builder()
                                                                 .id(order.getTable().getId())
                                                                 .number(order.getTable().getNumber())
                                                                 .capacity(order.getTable().getCapacity())
@@ -143,7 +144,8 @@ public class OrderItemServiceImpl implements OrderItemService {
                                                                 .build()
                                                 : null)
                                 .employee(order.getEmployee() != null
-                                                ? com.nguyenhuuquang.doanketthucmon.cafe.dto.UserResponse.builder()
+                                                ? com.nguyenhuuquang.doanketthucmon.cafe.dto.response.UserResponse
+                                                                .builder()
                                                                 .id(order.getEmployee().getId())
                                                                 .username(order.getEmployee().getUsername())
                                                                 .fullName(order.getEmployee().getFullName())
@@ -153,7 +155,8 @@ public class OrderItemServiceImpl implements OrderItemService {
                                 .status(order.getStatus() != null ? order.getStatus().name() : null)
                                 .totalAmount(order.getTotalAmount())
                                 .promotion(order.getPromotion() != null
-                                                ? com.nguyenhuuquang.doanketthucmon.cafe.dto.PromotionResponse.builder()
+                                                ? com.nguyenhuuquang.doanketthucmon.cafe.dto.response.PromotionResponse
+                                                                .builder()
                                                                 .id(order.getPromotion().getId())
                                                                 .name(order.getPromotion().getName())
                                                                 .discountAmount(order.getPromotion()

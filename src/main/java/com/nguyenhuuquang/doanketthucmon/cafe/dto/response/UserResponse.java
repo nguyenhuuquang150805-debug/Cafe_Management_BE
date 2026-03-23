@@ -1,4 +1,4 @@
-package com.nguyenhuuquang.doanketthucmon.cafe.dto;
+package com.nguyenhuuquang.doanketthucmon.cafe.dto.response;
 
 import com.nguyenhuuquang.doanketthucmon.cafe.entity.enums.Role;
 

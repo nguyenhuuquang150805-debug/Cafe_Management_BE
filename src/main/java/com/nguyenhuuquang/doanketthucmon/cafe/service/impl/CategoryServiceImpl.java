@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.CategoryRequest;
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.CategoryResponse;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.request.CategoryRequest;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.response.CategoryResponse;
 import com.nguyenhuuquang.doanketthucmon.cafe.entity.Category;
 import com.nguyenhuuquang.doanketthucmon.cafe.repository.CategoryRepository;
 import com.nguyenhuuquang.doanketthucmon.cafe.service.CategoryService;

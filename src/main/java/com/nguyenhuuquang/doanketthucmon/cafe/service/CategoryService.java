@@ -2,8 +2,8 @@ package com.nguyenhuuquang.doanketthucmon.cafe.service;
 
 import java.util.List;
 
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.CategoryRequest;
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.CategoryResponse;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.request.CategoryRequest;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.response.CategoryResponse;
 
 public interface CategoryService {
     CategoryResponse createCategory(CategoryRequest request);
