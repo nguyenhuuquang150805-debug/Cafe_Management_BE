@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.OrderRequest;
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.OrderResponse;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.request.OrderRequest;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.response.OrderResponse;
 import com.nguyenhuuquang.doanketthucmon.cafe.service.OrderService;
 
 import lombok.RequiredArgsConstructor;

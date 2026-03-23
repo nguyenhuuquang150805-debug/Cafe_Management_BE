@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.CategoryRequest;
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.CategoryResponse;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.request.CategoryRequest;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.response.CategoryResponse;
 import com.nguyenhuuquang.doanketthucmon.cafe.entity.Category;
 import com.nguyenhuuquang.doanketthucmon.cafe.repository.CategoryRepository;
 import com.nguyenhuuquang.doanketthucmon.cafe.service.CategoryService;
@@ -43,7 +43,6 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.createCategory(request));
     }
 
-    // ✅ API thêm danh mục (FormData có ảnh)
     @PostMapping(value = "/upload", consumes = "multipart/form-data")
     public ResponseEntity<Category> createCategoryWithImage(
             @RequestParam("name") String name,
@@ -51,18 +50,12 @@ public class CategoryController {
             @RequestParam(value = "imageFile", required = false) MultipartFile imageFile) throws IOException {
 
         String imageUrl = null;
-
         if (imageFile != null && !imageFile.isEmpty()) {
             String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
-            Path uploadPath = Paths.get("src/main/resources/static/uploads");
-
-            if (!Files.exists(uploadPath)) {
+            Path uploadPath = Paths.get("uploads");
+            if (!Files.exists(uploadPath))
                 Files.createDirectories(uploadPath);
-            }
-
-            Path filePath = uploadPath.resolve(fileName);
-            Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
+            Files.copy(imageFile.getInputStream(), uploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
             imageUrl = fileName;
         }
 
@@ -72,7 +65,6 @@ public class CategoryController {
         category.setImageUrl(imageUrl);
         category.setCreatedAt(LocalDateTime.now());
         category.setUpdatedAt(LocalDateTime.now());
-
         categoryRepository.save(category);
         return ResponseEntity.ok(category);
     }
@@ -88,39 +80,9 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryResponse> updateCategory(
-            @PathVariable Long id,
+    public ResponseEntity<CategoryResponse> updateCategory(@PathVariable Long id,
             @RequestBody CategoryRequest request) {
         return ResponseEntity.ok(categoryService.updateCategory(id, request));
-    }
-
-    @PutMapping(value = "/{id}", consumes = "multipart/form-data")
-    public ResponseEntity<Category> updateCategoryWithImage(
-            @PathVariable Long id,
-            @RequestParam("name") String name,
-            @RequestParam("description") String description,
-            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile) throws IOException {
-
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy danh mục!"));
-
-        category.setName(name);
-        category.setDescription(description);
-        category.setUpdatedAt(LocalDateTime.now());
-
-        if (imageFile != null && !imageFile.isEmpty()) {
-            String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
-            Path uploadPath = Paths.get("src/main/resources/static/uploads");
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-            Path filePath = uploadPath.resolve(fileName);
-            Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            category.setImageUrl(fileName);
-        }
-
-        categoryRepository.save(category);
-        return ResponseEntity.ok(category);
     }
 
     @DeleteMapping("/{id}")

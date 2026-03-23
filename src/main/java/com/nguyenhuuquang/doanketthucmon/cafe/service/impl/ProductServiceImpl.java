@@ -1,3 +1,4 @@
+// ===== ProductServiceImpl.java =====
 package com.nguyenhuuquang.doanketthucmon.cafe.service.impl;
 
 import java.time.LocalDateTime;
@@ -5,9 +6,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.CategoryResponse;
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.ProductRequest;
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.ProductResponse;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.request.ProductRequest;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.response.CategoryResponse;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.response.ProductResponse;
 import com.nguyenhuuquang.doanketthucmon.cafe.entity.Category;
 import com.nguyenhuuquang.doanketthucmon.cafe.entity.Product;
 import com.nguyenhuuquang.doanketthucmon.cafe.repository.CategoryRepository;
@@ -46,24 +47,19 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductResponse> getAllProducts() {
-        return productRepository.findAll()
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
+        return productRepository.findAll().stream().map(this::mapToResponse).toList();
     }
 
     @Override
     public ProductResponse getProductById(Long id) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-        return mapToResponse(product);
+        return mapToResponse(productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found")));
     }
 
     @Override
     public ProductResponse updateProduct(Long id, ProductRequest request) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
-
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
 
@@ -87,25 +83,24 @@ public class ProductServiceImpl implements ProductService {
 
     private ProductResponse mapToResponse(Product product) {
         Category category = product.getCategory();
-
-        CategoryResponse categoryResponse = new CategoryResponse();
-        categoryResponse.setId(category.getId());
-        categoryResponse.setName(category.getName());
-        categoryResponse.setDescription(category.getDescription());
-        categoryResponse.setImageUrl(category.getImageUrl());
-        categoryResponse.setCreatedAt(category.getCreatedAt());
-        categoryResponse.setUpdatedAt(category.getUpdatedAt());
+        CategoryResponse categoryResponse = CategoryResponse.builder()
+                .id(category.getId())
+                .name(category.getName())
+                .description(category.getDescription())
+                .imageUrl(category.getImageUrl())
+                .createdAt(category.getCreatedAt())
+                .updatedAt(category.getUpdatedAt())
+                .build();
 
         return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
                 .price(product.getPrice())
-                .category(categoryResponse) // gắn object CategoryResponse
+                .category(categoryResponse)
                 .imageUrl(product.getImageUrl())
                 .stockQuantity(product.getStockQuantity())
                 .isActive(product.getIsActive())
                 .build();
     }
-
 }

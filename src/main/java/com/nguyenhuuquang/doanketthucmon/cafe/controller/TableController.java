@@ -4,18 +4,10 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.TableRequest;
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.TableResponse;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.request.TableRequest;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.response.TableResponse;
 import com.nguyenhuuquang.doanketthucmon.cafe.service.TableService;
 
 import lombok.RequiredArgsConstructor;
@@ -44,7 +36,7 @@ public class TableController {
         return ResponseEntity.ok(tableService.getTableById(id));
     }
 
-    @PreAuthorize("hasRole('STAFF') or hasRole('EMPLOYEE')")
+    @PreAuthorize("hasRole('STAFF') or hasRole('EMPLOYEE') or hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<TableResponse> updateTable(@PathVariable Long id, @RequestBody TableRequest request) {
         return ResponseEntity.ok(tableService.updateTable(id, request));

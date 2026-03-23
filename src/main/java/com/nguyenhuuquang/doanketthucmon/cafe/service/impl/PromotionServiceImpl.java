@@ -1,3 +1,4 @@
+// ===== PromotionServiceImpl.java =====
 package com.nguyenhuuquang.doanketthucmon.cafe.service.impl;
 
 import java.time.LocalDateTime;
@@ -7,10 +8,10 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.CategoryResponse;
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.ProductResponse;
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.PromotionRequest;
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.PromotionResponse;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.request.PromotionRequest;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.response.CategoryResponse;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.response.ProductResponse;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.response.PromotionResponse;
 import com.nguyenhuuquang.doanketthucmon.cafe.entity.Category;
 import com.nguyenhuuquang.doanketthucmon.cafe.entity.Product;
 import com.nguyenhuuquang.doanketthucmon.cafe.entity.Promotion;
@@ -41,8 +42,7 @@ public class PromotionServiceImpl implements PromotionService {
         promotion.setUpdatedAt(LocalDateTime.now());
 
         if (request.getProductIds() != null && !request.getProductIds().isEmpty()) {
-            productRepository.findAllById(request.getProductIds())
-                    .forEach(promotion::addProduct);
+            productRepository.findAllById(request.getProductIds()).forEach(promotion::addProduct);
         }
 
         promotionRepository.saveAndFlush(promotion);
@@ -52,15 +52,13 @@ public class PromotionServiceImpl implements PromotionService {
     @Override
     public List<PromotionResponse> getAllPromotions() {
         return promotionRepository.findAllWithProducts().stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+                .map(this::mapToResponse).collect(Collectors.toList());
     }
 
     @Override
     public PromotionResponse getPromotionById(Long id) {
-        Promotion promotion = promotionRepository.findByIdWithProducts(id)
-                .orElseThrow(() -> new RuntimeException("Promotion not found"));
-        return mapToResponse(promotion);
+        return mapToResponse(promotionRepository.findByIdWithProducts(id)
+                .orElseThrow(() -> new RuntimeException("Promotion not found")));
     }
 
     @Override
@@ -80,8 +78,7 @@ public class PromotionServiceImpl implements PromotionService {
         promotion.getProducts().clear();
 
         if (request.getProductIds() != null && !request.getProductIds().isEmpty()) {
-            productRepository.findAllById(request.getProductIds())
-                    .forEach(promotion::addProduct);
+            productRepository.findAllById(request.getProductIds()).forEach(promotion::addProduct);
         }
 
         promotionRepository.saveAndFlush(promotion);
@@ -92,13 +89,10 @@ public class PromotionServiceImpl implements PromotionService {
     public void deletePromotion(Long id) {
         Promotion promotion = promotionRepository.findByIdWithProducts(id)
                 .orElseThrow(() -> new RuntimeException("Promotion not found"));
-
-        for (Product p : promotion.getProducts()) {
+        for (Product p : promotion.getProducts())
             p.getPromotions().remove(promotion);
-        }
         promotion.getProducts().clear();
         promotionRepository.saveAndFlush(promotion);
-
         promotionRepository.delete(promotion);
     }
 
@@ -115,10 +109,8 @@ public class PromotionServiceImpl implements PromotionService {
                 .updatedAt(promotion.getUpdatedAt())
                 .products(promotion.getProducts().stream()
                         .map(p -> ProductResponse.builder()
-                                .id(p.getId())
-                                .name(p.getName())
-                                .description(p.getDescription())
-                                .price(p.getPrice())
+                                .id(p.getId()).name(p.getName())
+                                .description(p.getDescription()).price(p.getPrice())
                                 .category(mapCategoryToResponse(p.getCategory()))
                                 .imageUrl(p.getImageUrl())
                                 .stockQuantity(p.getStockQuantity())
@@ -131,13 +123,10 @@ public class PromotionServiceImpl implements PromotionService {
     private CategoryResponse mapCategoryToResponse(Category category) {
         if (category == null)
             return null;
-        CategoryResponse response = new CategoryResponse();
-        response.setId(category.getId());
-        response.setName(category.getName());
-        response.setDescription(category.getDescription());
-        response.setImageUrl(category.getImageUrl());
-        response.setCreatedAt(category.getCreatedAt());
-        response.setUpdatedAt(category.getUpdatedAt());
-        return response;
+        return CategoryResponse.builder()
+                .id(category.getId()).name(category.getName())
+                .description(category.getDescription()).imageUrl(category.getImageUrl())
+                .createdAt(category.getCreatedAt()).updatedAt(category.getUpdatedAt())
+                .build();
     }
 }

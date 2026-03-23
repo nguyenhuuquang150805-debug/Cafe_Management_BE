@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.RegisterRequest;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.request.RegisterRequest;
 import com.nguyenhuuquang.doanketthucmon.cafe.entity.User;
 import com.nguyenhuuquang.doanketthucmon.cafe.entity.enums.Role;
 import com.nguyenhuuquang.doanketthucmon.cafe.repository.UserRepository;

@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.TableRequest;
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.TableResponse;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.request.TableRequest;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.response.TableResponse;
 import com.nguyenhuuquang.doanketthucmon.cafe.entity.TableEntity;
 import com.nguyenhuuquang.doanketthucmon.cafe.repository.TableRepository;
 import com.nguyenhuuquang.doanketthucmon.cafe.service.TableService;
@@ -28,21 +28,17 @@ public class TableServiceImpl implements TableService {
         table.setStatus(request.getStatus());
         table.setCreatedAt(LocalDateTime.now());
         table.setUpdatedAt(LocalDateTime.now());
-
         return mapToResponse(tableRepository.save(table));
     }
 
     @Override
     public List<TableResponse> getAllTables() {
-        return tableRepository.findAll().stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+        return tableRepository.findAll().stream().map(this::mapToResponse).collect(Collectors.toList());
     }
 
     @Override
     public TableResponse getTableById(Long id) {
-        return tableRepository.findById(id)
-                .map(this::mapToResponse)
+        return tableRepository.findById(id).map(this::mapToResponse)
                 .orElseThrow(() -> new RuntimeException("Table not found"));
     }
 
@@ -50,30 +46,24 @@ public class TableServiceImpl implements TableService {
     public TableResponse updateTable(Long id, TableRequest request) {
         TableEntity table = tableRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Table not found"));
-
         table.setNumber(request.getNumber());
         table.setCapacity(request.getCapacity());
         table.setStatus(request.getStatus());
         table.setUpdatedAt(LocalDateTime.now());
-
         return mapToResponse(tableRepository.save(table));
     }
 
     @Override
     public void deleteTable(Long id) {
-        TableEntity table = tableRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Table not found"));
-        tableRepository.delete(table);
+        tableRepository.delete(tableRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Table not found")));
     }
 
     private TableResponse mapToResponse(TableEntity table) {
         return TableResponse.builder()
-                .id(table.getId())
-                .number(table.getNumber())
-                .capacity(table.getCapacity())
-                .status(table.getStatus())
-                .createdAt(table.getCreatedAt())
-                .updatedAt(table.getUpdatedAt())
+                .id(table.getId()).number(table.getNumber())
+                .capacity(table.getCapacity()).status(table.getStatus())
+                .createdAt(table.getCreatedAt()).updatedAt(table.getUpdatedAt())
                 .build();
     }
 }

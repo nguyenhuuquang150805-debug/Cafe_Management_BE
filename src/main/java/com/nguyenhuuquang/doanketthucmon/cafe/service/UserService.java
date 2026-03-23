@@ -1,9 +1,8 @@
 package com.nguyenhuuquang.doanketthucmon.cafe.service;
 
 import java.util.List;
-
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.UserRequest;
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.UserResponse;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.request.UserRequest;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.response.UserResponse;
 
 public interface UserService {
     UserResponse createUser(UserRequest request);

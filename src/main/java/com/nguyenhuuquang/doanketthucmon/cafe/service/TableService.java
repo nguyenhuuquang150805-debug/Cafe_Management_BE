@@ -1,9 +1,8 @@
 package com.nguyenhuuquang.doanketthucmon.cafe.service;
 
 import java.util.List;
-
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.TableRequest;
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.TableResponse;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.request.TableRequest;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.response.TableResponse;
 
 public interface TableService {
     TableResponse createTable(TableRequest request);

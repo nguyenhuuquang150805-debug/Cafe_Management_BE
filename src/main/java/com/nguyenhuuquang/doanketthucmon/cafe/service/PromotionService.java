@@ -1,9 +1,8 @@
 package com.nguyenhuuquang.doanketthucmon.cafe.service;
 
 import java.util.List;
-
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.PromotionRequest;
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.PromotionResponse;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.request.PromotionRequest;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.response.PromotionResponse;
 
 public interface PromotionService {
     PromotionResponse createPromotion(PromotionRequest request);

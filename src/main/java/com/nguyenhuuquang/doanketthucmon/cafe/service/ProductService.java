@@ -1,9 +1,8 @@
 package com.nguyenhuuquang.doanketthucmon.cafe.service;
 
 import java.util.List;
-
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.ProductRequest;
-import com.nguyenhuuquang.doanketthucmon.cafe.dto.ProductResponse;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.request.ProductRequest;
+import com.nguyenhuuquang.doanketthucmon.cafe.dto.response.ProductResponse;
 
 public interface ProductService {
     ProductResponse createProduct(ProductRequest request);
