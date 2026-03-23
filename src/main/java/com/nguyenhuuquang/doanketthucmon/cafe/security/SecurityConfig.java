@@ -33,22 +33,22 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
-                        // 🔓 Public
-                        .requestMatchers("/api/auth/**", "/uploads/**", "/api/payment/**").permitAll()
+                        .requestMatchers("/health", "/", "/api/auth/**", "/uploads/**", "/api/payment/**").permitAll()
 
-                        // 🔓 GET công khai (menu, danh mục, sản phẩm)
+                        // 🔓 GET công khai
                         .requestMatchers(HttpMethod.GET,
                                 "/api/categories/**",
                                 "/api/products/**",
                                 "/api/promotions/**")
                         .permitAll()
-                        // 🧾 BILLS - ĐẶT TRƯỚC CÁC QUY TẮC KHÁC
-                        .requestMatchers(HttpMethod.GET, "/api/bills/**").permitAll() // ✅ Cho phép GET public
+
+                        // 🧾 BILLS
+                        .requestMatchers(HttpMethod.GET, "/api/bills/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/bills/**").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers(HttpMethod.PUT, "/api/bills/**").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers(HttpMethod.DELETE, "/api/bills/**").hasRole("ADMIN")
 
-                        // 🧑‍💼 ADMIN & EMPLOYEE có thể truy cập toàn bộ tables + orders
+                        // 🧑‍💼 Tables + Orders
                         .requestMatchers(HttpMethod.GET, "/api/tables/**", "/api/orders/**")
                         .hasAnyRole("ADMIN", "STAFF", "EMPLOYEE")
                         .requestMatchers(HttpMethod.POST, "/api/tables/**", "/api/orders/**")
@@ -57,9 +57,8 @@ public class SecurityConfig {
                         .hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers(HttpMethod.DELETE, "/api/tables/**", "/api/orders/**")
                         .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/orders/**").hasRole("ADMIN")
 
-                        // 🧑‍💼 ADMIN-only: quản lý danh mục, sản phẩm, khuyến mãi
+                        // 🧑‍💼 ADMIN-only
                         .requestMatchers(HttpMethod.POST,
                                 "/api/categories/**", "/api/products/**", "/api/promotions/**")
                         .hasRole("ADMIN")
@@ -70,24 +69,22 @@ public class SecurityConfig {
                                 "/api/categories/**", "/api/products/**", "/api/promotions/**")
                         .hasRole("ADMIN")
 
-                        // 🧑‍💼 ADMIN & EMPLOYEE có thể quản lý user
+                        // 👤 Users
                         .requestMatchers(HttpMethod.GET, "/api/users/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/users/**").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/users/**").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("ADMIN")
 
-                        // 🔒 Còn lại yêu cầu đăng nhập
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // ✅ CORS cho frontend
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173"));
+        configuration.setAllowedOriginPatterns(List.of("*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);

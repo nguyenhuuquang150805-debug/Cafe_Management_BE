@@ -4,6 +4,7 @@ COPY pom.xml .
 RUN mvn dependency:go-offline -B
 COPY src ./src
 RUN mvn clean package -DskipTests -B
+RUN ls -la target/ && echo "JAR files:" && find target -name "*.jar" -not -name "*sources*"
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
