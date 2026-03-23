@@ -13,65 +13,50 @@ public class DatabaseConfig {
 
     @Bean
     public DataSource dataSource() {
-        String databaseUrl = System.getenv("DATABASE_URL");
+        String rawUrl = System.getenv("DATABASE_URL");
+        String jdbcUrl;
+
+        if (rawUrl != null && rawUrl.startsWith("postgresql://")) {
+            String withoutScheme = rawUrl.substring("postgresql://".length());
+            String hostAndDb = withoutScheme.substring(withoutScheme.indexOf("@") + 1);
+            jdbcUrl = "jdbc:postgresql://" + hostAndDb;
+        } else if (rawUrl != null && rawUrl.startsWith("jdbc:postgresql://")) {
+            jdbcUrl = rawUrl;
+        } else {
+            jdbcUrl = "jdbc:postgresql://localhost:5432/doanketthucmon";
+        }
+
         String username = System.getenv("PGUSER");
         String password = System.getenv("PGPASSWORD");
 
-        if (databaseUrl != null && databaseUrl.contains("@")) {
-            try {
-                String urlWithoutProtocol = databaseUrl.substring(databaseUrl.indexOf("://") + 3);
-
-                if (urlWithoutProtocol.contains("@")) {
-                    String[] parts = urlWithoutProtocol.split("@");
-                    String credentialsPart = parts[0];
-                    String hostPart = parts[1];
-
-                    if (username == null && credentialsPart.contains(":")) {
-                        String[] credentials = credentialsPart.split(":", 2);
-                        username = credentials[0];
-                        password = credentials[1];
-                    }
-
-                    databaseUrl = "jdbc:postgresql://" + hostPart;
-                }
-            } catch (Exception e) {
-                System.err.println("Error parsing DATABASE_URL: " + e.getMessage());
-                e.printStackTrace();
+        if ((username == null || password == null) && rawUrl != null && rawUrl.contains("@")) {
+            String withoutScheme = rawUrl.substring(rawUrl.indexOf("://") + 3);
+            String credentials = withoutScheme.substring(0, withoutScheme.indexOf("@"));
+            if (credentials.contains(":")) {
+                username = credentials.split(":", 2)[0];
+                password = credentials.split(":", 2)[1];
             }
-        } else if (databaseUrl != null && databaseUrl.startsWith("postgresql://")) {
-            databaseUrl = "jdbc:" + databaseUrl;
         }
 
-        if (databaseUrl == null) {
-            databaseUrl = "jdbc:postgresql://localhost:5432/doanketthucmon";
+        if (username == null)
             username = "postgres";
+        if (password == null)
             password = "postgres";
-        }
 
-        System.out.println("=== Database Connection Info ===");
-        System.out.println("URL: " + databaseUrl);
+        System.out.println("=== DB Connection ===");
+        System.out.println("JDBC URL: " + jdbcUrl);
         System.out.println("Username: " + username);
-        System.out.println("Password: " + (password != null ? "***" : "null"));
-        System.out.println("================================");
+        System.out.println("====================");
 
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(databaseUrl);
+        config.setJdbcUrl(jdbcUrl);
         config.setUsername(username);
         config.setPassword(password);
         config.setDriverClassName("org.postgresql.Driver");
-
         config.setMaximumPoolSize(5);
-        config.setMinimumIdle(2);
-        config.setConnectionTimeout(60000);
-        config.setIdleTimeout(300000);
-        config.setMaxLifetime(600000);
+        config.setMinimumIdle(1);
+        config.setConnectionTimeout(30000);
         config.setInitializationFailTimeout(60000);
-
-        config.setConnectionTestQuery("SELECT 1");
-        config.setValidationTimeout(5000);
-
-        config.setPoolName("CafeAppHikariPool");
-        config.setAutoCommit(true);
 
         return new HikariDataSource(config);
     }
