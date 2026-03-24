@@ -54,7 +54,7 @@ public class CategoryController {
 
         if (imageFile != null && !imageFile.isEmpty()) {
             String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
-            Path uploadPath = Paths.get("src/main/resources/static/uploads");
+            Path uploadPath = Paths.get("uploads");
 
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
@@ -110,7 +110,7 @@ public class CategoryController {
 
         if (imageFile != null && !imageFile.isEmpty()) {
             String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
-            Path uploadPath = Paths.get("src/main/resources/static/uploads");
+            Path uploadPath = Paths.get("uploads");
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
