@@ -34,7 +34,7 @@ public class SecurityConfig {
                 configuration.setAllowedOriginPatterns(List.of("*")); // hoặc chỉ định FE URL cụ thể
                 configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 configuration.setAllowedHeaders(List.of("*"));
-                configuration.setAllowCredentials(false);
+                configuration.setAllowCredentials(true);
                 configuration.setMaxAge(3600L);
 
                 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -49,7 +49,7 @@ public class SecurityConfig {
                                 .csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(authz -> authz
                                                 .requestMatchers("/health", "/", "/api/auth/**", "/uploads/**",
-                                                                "/api/payment/**")
+                                                                "/api/payment/**", "/ws/**")
                                                 .permitAll()
 
                                                 .requestMatchers(HttpMethod.GET,
