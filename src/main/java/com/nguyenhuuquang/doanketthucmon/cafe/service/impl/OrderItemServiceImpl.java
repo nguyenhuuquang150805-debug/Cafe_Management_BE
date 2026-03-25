@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,11 +32,23 @@ public class OrderItemServiceImpl implements OrderItemService {
         private final OrderRepository orderRepository;
         private final ProductRepository productRepository;
 
+        // ✅ Inject SimpMessagingTemplate để broadcast WebSocket
+        private final SimpMessagingTemplate messagingTemplate;
+
         @Override
         public OrderItemResponse createOrderItem(OrderItemRequest request) {
                 OrderItem item = mapRequestToEntity(request, new OrderItem());
                 orderItemRepository.save(item);
-                return mapToResponse(item);
+
+                OrderItemResponse response = mapToResponse(item);
+
+                // ✅ Broadcast đến /topic/new-item-for-staff sau khi tạo item thành công
+                // Đây là kênh Staff lắng nghe để nhận thông báo món mới từ khách
+                messagingTemplate.convertAndSend("/topic/new-item-for-staff", response);
+                System.out.println("📡 Broadcast món mới đến /topic/new-item-for-staff: "
+                                + item.getProduct().getName());
+
+                return response;
         }
 
         @Override
