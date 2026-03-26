@@ -53,6 +53,7 @@ public class DatabaseConfig {
         config.setUsername(username);
         config.setPassword(password);
         config.setDriverClassName("org.postgresql.Driver");
+        config.setInitializationFailTimeout(-1);
         config.setMaximumPoolSize(5);
         config.setMinimumIdle(1);
         config.setConnectionTimeout(30000);
